@@ -1,0 +1,36 @@
+{
+	"manifest_version": 2,
+	"name": "Block Weibo",
+	"version": "1.0",
+	"description": "Block weibo i don't want to see.",
+	"icons": {
+		"48": "border-48.png"
+	},
+	"browser_action": {
+		"default_icon": "border-48.png",
+		"default_title": "block weibo",
+		"default_popup": "popupBlockConfig.html"
+	},
+	"applications": {
+		"gecko": {
+			"id": "qhd2009lwdxm@hotmail.com"
+		}
+	},
+	"permissions": [
+		"webRequest",
+		"webRequestBlocking",
+		"tabs",
+		"activeTab",
+		"contextMenus",
+		"storage",
+		"*://d.weibo.com/*"
+	],
+	"background": {
+		"scripts": [
+			"background.js"
+		]
+	},
+	"options_ui": {
+		"page": "blockConfig.html"
+	}
+}
