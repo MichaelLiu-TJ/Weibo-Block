@@ -4,7 +4,11 @@
  */
 
 function eatPage(request, sender, sendResponse) {
+	// console.log(request);
+	// console.log(sender);
+	// console.log(sendResponse);
 	rebuildBlockContentsAndExecuteBlock();
+	browser.runtime.onMessage.removeListener(eatPage);
 }
 
 browser.runtime.onMessage.addListener(eatPage);

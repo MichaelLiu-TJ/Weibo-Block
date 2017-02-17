@@ -1,6 +1,10 @@
 /**
  * 向本地存储中添加要屏蔽的关键字
  */
+
+console.log("pop up component init;");
+
+
 function addKeyword() {
 	var willBlockKeywordValue = document.getElementById("will_block_keyword").value;
 
