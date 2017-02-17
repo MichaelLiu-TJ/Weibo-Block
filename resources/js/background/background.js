@@ -40,7 +40,7 @@ function blockWeiboCard() {
     });
 	
 	var executing = browser.tabs.executeScript({
-      file: "page-eater.js"
+      file: "/resources/js/content/page-eater.js"
     });
 	
 	querying.then(function (tabs) {

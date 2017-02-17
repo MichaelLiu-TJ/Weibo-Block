@@ -1,44 +1,55 @@
+/**
+ * page-eater.js 
+ * 屏蔽你不想看到的微博
+ */
+
 function eatPage(request, sender, sendResponse) {
-	blockWeibo();
+	rebuildBlockContentsAndExecuteBlock();
 }
 
 browser.runtime.onMessage.addListener(eatPage);
+var block_content = block_contents;
 
-var block_content = {
-	wb_mids:[],
-	wb_tbinfos:[],
-	wb_person_ids:[],
-	wb_key_words:["杨幂","大幂幂"]
+function rebuildBlockContentsAndExecuteBlock(){
+	var getting = browser.storage.local.get(keywordIndex);
+		getting.then(function(result) {
+			if(result[keywordIndex]==null){
+				return;
+			}
+			var keywordFromLocal = result[keywordIndex];
+
+			for(index in keywordFromLocal){
+				if(block_content['wb_key_words'].indexOf(keywordFromLocal[index])<0){
+					block_content['wb_key_words'].push(keywordFromLocal[index]);
+				}
+			}
+			console.log(block_content['wb_key_words']);
+			executeBlock();
+		}, handleError);
 }
 
 /**
  * 屏蔽微博
  */
-function blockWeibo(){
+function executeBlock(){
 	var weiboCardsList = document.getElementsByClassName("WB_cardwrap WB_feed_type S_bg2");
-	if(weiboCardsList == null){
-		return;
-	}
+	if(weiboCardsList == null){return;}
+	
 	for(index in weiboCardsList){
 		var weiboCard = weiboCardsList[index];
-		if(weiboCard == undefined || weiboCard == null){
-			continue;
-		}
-		
-		if(weiboCard.parentNode == undefined || weiboCard.parentNode == null){
-			continue;
-		}
+		if(weiboCard == undefined || weiboCard == null){continue;}
+		if(weiboCard.parentNode == undefined || weiboCard.parentNode == null){continue;}
 		
 		var weibo_info = extractWeiboCard(weiboCard);
-		console.log(weibo_info);
 		
 		if(needBlock(weibo_info)){
-			weiboCard.style.display = 'none';
-			console.log("Block a piece of weibo");
-			console.log(weibo_info);
-			continue;
+			if(weiboCard.style.display != "none"){
+				weiboCard.style.display = 'none';
+				console.log("Block a piece of weibo");
+				console.log(weibo_info);
+				continue;
+			}
 		}
-
 	}
 }
 
@@ -48,15 +59,10 @@ function blockWeibo(){
  */
 function extractWeiboCard(weiboCard){
 	
-	if(weiboCard == undefined||weiboCard== null){
-		return;
-	}
+	if(weiboCard == undefined||weiboCard== null){return;}
 	
-	var tbinfo;
-	var mid;
-	
-	tbinfo 	= weiboCard.attributes["tbinfo"].value;
-	mid 	= weiboCard.attributes["mid"].value;
+	var tbinfo 	= weiboCard.attributes["tbinfo"].value;
+	var mid 	= weiboCard.attributes["mid"].value;
 	
 	var wb_detail_fix;
 	for(index in weiboCard.children){
@@ -91,9 +97,7 @@ function extractWeiboCard(weiboCard){
 		}
 	}
 	
-	// get person nick name and person id
-	var nick_name;
-	var wb_usercard,wb_person_id,wb_refer_flag;
+	var nick_name,wb_usercard,wb_person_id,wb_refer_flag;// 一些发送这条微博的用户的个人信息
 	if(wb_info_div!=null && wb_info_div!= undefined){
 		for(index in wb_info_div.children){
 			if("W_f14 W_fb S_txt1" == wb_info_div.children[index].className){

@@ -4,12 +4,12 @@
 	"version": "1.0",
 	"description": "Block weibo i don't want to see.",
 	"icons": {
-		"48": "border-48.png"
+		"48": "/resources/images/border-48.png"
 	},
 	"browser_action": {
-		"default_icon": "border-48.png",
+		"default_icon": "/resources/images/border-48.png",
 		"default_title": "block weibo",
-		"default_popup": "popupBlockConfig.html"
+		"default_popup": "/page/popupBlockConfig.html"
 	},
 	"applications": {
 		"gecko": {
@@ -25,12 +25,18 @@
 		"storage",
 		"*://d.weibo.com/*"
 	],
+	"content_scripts": [
+	    {
+	      "matches": ["*://d.weibo.com/*"],
+	      "js": ["/resources/js/content/weibo_content_script.js","/resources/js/public.js"]
+	    }
+	],
 	"background": {
 		"scripts": [
-			"background.js"
+			"/resources/js/background/background.js"
 		]
 	},
 	"options_ui": {
-		"page": "blockConfig.html"
+		"page": "/page/blockConfig.html"
 	}
 }
