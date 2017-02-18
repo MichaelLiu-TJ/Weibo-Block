@@ -5,5 +5,4 @@ var block_contents = {
 	wb_tbinfos : [],
 	wb_person_ids : [],
 	wb_key_words : [ "杨幂", "大幂幂" ]
-}
-
+};

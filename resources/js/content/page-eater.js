@@ -1,12 +1,9 @@
 /**
  * page-eater.js 
- * 屏蔽你不想看到的微博
+ * block the pieces of weibo that you don't want to see.
  */
 
 function eatPage(request, sender, sendResponse) {
-	// console.log(request);
-	// console.log(sender);
-	// console.log(sendResponse);
 	rebuildBlockContentsAndExecuteBlock();
 	browser.runtime.onMessage.removeListener(eatPage);
 }
@@ -17,54 +14,52 @@ var block_content = block_contents;
 function rebuildBlockContentsAndExecuteBlock(){
 	var getting = browser.storage.local.get(keywordIndex);
 		getting.then(function(result) {
-			if(result[keywordIndex]==null){
-				return;
-			}
-			var keywordFromLocal = result[keywordIndex];
+			if(result[keywordIndex]!=null){
+				var keywordFromLocal = result[keywordIndex];
 
-			for(index in keywordFromLocal){
-				if(block_content['wb_key_words'].indexOf(keywordFromLocal[index])<0){
-					block_content['wb_key_words'].push(keywordFromLocal[index]);
+				for(index in keywordFromLocal){
+					if(block_content['wb_key_words'].indexOf(keywordFromLocal[index])<0){
+						block_content['wb_key_words'].push(keywordFromLocal[index]);
+					}
 				}
 			}
-			console.log(block_content['wb_key_words']);
+			// for(index in block_content['wb_key_words']){
+			// 	console.log(block_content['wb_key_words'][index]);
+			// }
 			executeBlock();
 		}, handleError);
 }
 
 /**
- * 屏蔽微博
+ * block weibo
  */
 function executeBlock(){
 	var weiboCardsList = document.getElementsByClassName("WB_cardwrap WB_feed_type S_bg2");
-	if(weiboCardsList == null){return;}
+	if(weiboCardsList == null || weiboCardsList.length == 0){console.log("can not get weibo list");return;}
 	
 	for(index in weiboCardsList){
 		var weiboCard = weiboCardsList[index];
 		if(weiboCard == undefined || weiboCard == null){continue;}
-		if(weiboCard.parentNode == undefined || weiboCard.parentNode == null){continue;}
 		
+	
+		if(weiboCard.attributes == undefined){
+			console.log(weiboCard.outerHTML);continue;
+		}
+
 		var weibo_info = extractWeiboCard(weiboCard);
-		
-		if(needBlock(weibo_info)){
-			if(weiboCard.style.display != "none"){
-				weiboCard.style.display = 'none';
-				console.log("Block a piece of weibo");
-				console.log(weibo_info);
-				continue;
-			}
+		if(weiboCard.style.display != "none" && needBlock(weibo_info)){
+			weiboCard.style.display = 'none';
+			console.log("Block a piece of weibo");
+			console.log(weibo_info.wb_text);
+			continue;
 		}
 	}
 }
 
 /**
- * 每一条微博及人的信息包含在一个复杂的div中，此方法是抽取其中的关键信息并包含在一个对象实例中
- *
+ * each piece of weibo containd in a complicated div. so this function will extract key info to a object.
  */
 function extractWeiboCard(weiboCard){
-	
-	if(weiboCard == undefined||weiboCard== null){return;}
-	
 	var tbinfo 	= weiboCard.attributes["tbinfo"].value;
 	var mid 	= weiboCard.attributes["mid"].value;
 	
@@ -140,6 +135,7 @@ function needBlock(weibo_info){
 	if(containsArr(weibo_info.wb_text, block_content.wb_key_words)){
 		return true;
 	}
+	return false;
 }
 
 var WeiboInfo = function(){

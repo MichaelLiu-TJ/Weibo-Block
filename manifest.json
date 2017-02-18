@@ -23,6 +23,7 @@
 		"activeTab",
 		"contextMenus",
 		"storage",
+		"nativeMessaging",
 		"*://d.weibo.com/*"
 	],
 	"content_scripts": [

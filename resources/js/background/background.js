@@ -20,8 +20,8 @@ function removeBlockWeiboCard(requestDetails) {
 
 function printAJAXRequest(requestDetails){
   if(requestDetails.type != null){
-    if (requestDetails.type == "xmlhttprequest") {
-	  ajaxURLs[requestDetails.url] = "yes";
+    if (requestDetails.type == "xmlhttprequest" || requestDetails.type == "sub_frame") {
+	    ajaxURLs[requestDetails.url] = "yes";
     }
   }
 }
@@ -53,13 +53,13 @@ function blockWeiboCard() {
 	
 	var executing = browser.tabs.executeScript({
       file: "/resources/js/content/page-eater.js"
+    }).then(function(){
+      querying.then(function (tabs) {
+          browser.tabs.sendMessage(tabs[0].id, {
+            replacement: "Message from the add-on!"
+          });
+        });
     });
-	
-	querying.then(function (tabs) {
-		browser.tabs.sendMessage(tabs[0].id, {
-			replacement: "Message from the add-on!"
-		});
-	});
 }
 
 
