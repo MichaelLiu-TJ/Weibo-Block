@@ -24,17 +24,25 @@
 		"contextMenus",
 		"storage",
 		"nativeMessaging",
-		"*://d.weibo.com/*"
+		"*://d.weibo.com/*",
+		"*://*.baidu.com/*"
 	],
 	"content_scripts": [
-	    {
-	      "matches": ["*://d.weibo.com/*"],
-	      "js": ["/resources/js/content/weibo_content_script.js","/resources/js/public.js"]
-	    }
+		{
+			"matches": [
+				"*://d.weibo.com/*"
+			],
+			"js": [
+				"/resources/js/content/weibo_content_script.js",
+				"/resources/js/public.js"
+			],
+			"run_at": "document_end"
+		}
 	],
 	"background": {
 		"scripts": [
-			"/resources/js/background/background.js"
+			"/resources/js/background/background.js",
+			"/resources/js/public.js"
 		]
 	},
 	"options_ui": {
