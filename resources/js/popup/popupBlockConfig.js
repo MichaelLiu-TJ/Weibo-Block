@@ -5,35 +5,14 @@ console.log("pop up component init;");
  */
 function addKeyword() {
 	var willBlockKeywordValue = document.getElementById("will_block_keyword").value;
-
-	browser.storage.local.get(keywordIndex).then(function (result) {
-		if (result[keywordIndex] == null) {
-			result[keywordIndex] = new Object();
-		}
-		result[keywordIndex][willBlockKeywordValue] = willBlockKeywordValue;
-
-		storeBlockKeywords(result[keywordIndex]);
-	}, handleError);
+	LocalStorageUtil.addKeyword(willBlockKeywordValue);
 }
 
 /**
  * 从本地存储中移除要屏蔽的关键字
  */
 function removeKeyword() {
-	browser.storage.local.get(keywordIndex).then(function (result) {
-		if (result[keywordIndex] == null) {
-			return;
-		}
-		delete result[keywordIndex][willBlockKeywordValue];
-
-		storeBlockKeywords(result[keywordIndex]);
-	}, handleError);
-}
-
-function storeBlockKeywords(keywords) {
-	browser.storage.local.set({
-		keyword16: keywords
-	});
+	// LocalStorageUtil.addKeyword("");
 }
 
 document.getElementById("will_block_keyword_button").onclick = addKeyword;

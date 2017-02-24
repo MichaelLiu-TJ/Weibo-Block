@@ -20,13 +20,6 @@ function eatPage(request, sender, sendResponse) {
 	}
 }
 
-var block_contents = {
-	wb_mids : [],
-	wb_tbinfos : [],
-	wb_person_ids : [],
-	wb_key_words : [ "杨幂", "大幂幂" ]
-};
-
 browser.runtime.onMessage.addListener(eatPage);
 var block_content = block_contents;
 
@@ -34,20 +27,17 @@ var block_content = block_contents;
  * 当页面改变需要再次进行屏蔽之后，先从本地存储中取出最新的屏蔽内容，再进行屏蔽
  */
 function rebuildBlockContentsAndExecuteBlock() {
-	var getting = browser.storage.local.get(keywordIndex);
+	var getting = LocalStorageUtil.getAll();
 	getting.then(function (result) {
-		if (result[keywordIndex] != null) {
-			var keywordFromLocal = result[keywordIndex];
+		if (result[storageIndexs.keywordIndex] != null) {
+			var keywordFromLocal = result[storageIndexs.keywordIndex];
 
 			for (var index in keywordFromLocal) {
-				if (block_content['wb_key_words'].indexOf(keywordFromLocal[index]) < 0) {
-					block_content['wb_key_words'].push(keywordFromLocal[index]);
+				if (block_content['keywordIndex'].indexOf(keywordFromLocal[index]) < 0) {
+					block_content['keywordIndex'].push(keywordFromLocal[index]);
 				}
 			}
 		}
-		// for(index in block_content['wb_key_words']){
-		// 	console.log(block_content['wb_key_words'][index]);
-		// }
 		executeBlock();
 	}, handleError);
 }
@@ -147,61 +137,17 @@ function extractWeiboCard(weiboCard) {
  * 根据微博的关键信息判断微博是否需要屏蔽
  */
 function needBlock(weibo_info) {
-	if (contains(block_content.wb_mids, weibo_info.mid)) {
+	if (contains(block_content.wb_block_mids_local_index, weibo_info.mid)) {
 		return true;
 	}
-	if (contains(block_content.wb_tbinfos, weibo_info.tbinfo)) {
+	if (contains(block_content.wb_block_tbinfos_local_index, weibo_info.tbinfo)) {
 		return true;
 	}
-	if (contains(block_content.wb_person_ids, weibo_info.wb_person_id)) {
+	if (contains(block_content.wb_block_person_ids_local_index, weibo_info.wb_person_id)) {
 		return true;
 	}
-	if (containsArr(weibo_info.wb_text, block_content.wb_key_words)) {
+	if (containsArr(weibo_info.keywordIndex, block_content.wb_key_words)) {
 		return true;
-	}
-	return false;
-}
-
-var WeiboInfo = function () {
-	this.mid;
-	this.tbinfo;
-	this.nick_name;
-	this.wb_person_id;
-	this.wb_text;
-}
-
-var WeiboPerson = function () {
-	this.nick_name;
-	this.person_id;
-	this.avatar_src_url;
-}
-
-function getQueryString(usercardStr, name) {
-	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-	var r = usercardStr.match(reg);
-	if (r != null) return unescape(r[2]); return null;
-}
-/**
- * 判断数组是否包含某元素
- */
-function contains(arr, obj) {
-	var i = arr.length;
-	while (i--) {
-		if (arr[i] === obj) {
-			return true;
-		}
-	}
-	return false;
-}
-/**
- * 判断字符串是否包含数组中某元素
- */
-function containsArr(str, arr) {
-	var i = arr.length;
-	while (i--) {
-		if (str.indexOf(arr[i]) >= 0) {
-			return true;
-		}
 	}
 	return false;
 }
