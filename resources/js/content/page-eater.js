@@ -21,7 +21,6 @@ function eatPage(request, sender, sendResponse) {
 }
 
 browser.runtime.onMessage.addListener(eatPage);
-var block_content = block_contents;
 
 /**
  * 当页面改变需要再次进行屏蔽之后，先从本地存储中取出最新的屏蔽内容，再进行屏蔽
@@ -29,12 +28,15 @@ var block_content = block_contents;
 function rebuildBlockContentsAndExecuteBlock() {
 	var getting = LocalStorageUtil.getAll();
 	getting.then(function (result) {
-		if (result[storageIndexs.keywordIndex] != null) {
-			var keywordFromLocal = result[storageIndexs.keywordIndex];
-
-			for (var index in keywordFromLocal) {
-				if (block_content['keywordIndex'].indexOf(keywordFromLocal[index]) < 0) {
-					block_content['keywordIndex'].push(keywordFromLocal[index]);
+		for (var index in storageIndexAndBlockContentIndexMap) {
+			var storageIndexStr = storageIndexs[index];//用于存储和获取local storage 的索引字符串
+			var temp_block_content = block_contents[storageIndexAndBlockContentIndexMap[index]];//内存中要屏蔽内容的分类数据数组
+			if (result[storageIndexStr] != null && storageIndexStr != null) {
+				var keywordFromLocal = result[storageIndexStr];// 从本地存储获取的其中一组数据
+				for (var index in keywordFromLocal) {
+					if (temp_block_content.indexOf(keywordFromLocal[index]) < 0) {
+						temp_block_content.push(keywordFromLocal[index]);
+					}
 				}
 			}
 		}
@@ -60,7 +62,7 @@ function executeBlock() {
 
 		var weibo_info = extractWeiboCard(weiboCard);
 		weiboCard.onmouseover = handleMouseOver;
-		weiboCard.onmouseout  = handleMouseOut;
+		weiboCard.onmouseout = handleMouseOut;
 		if (weiboCard.style.display != "none" && needBlock(weibo_info)) {
 			weiboCard.style.display = 'none';
 			console.log("Block a piece of weibo");
@@ -137,16 +139,16 @@ function extractWeiboCard(weiboCard) {
  * 根据微博的关键信息判断微博是否需要屏蔽
  */
 function needBlock(weibo_info) {
-	if (contains(block_content.wb_block_mids_local_index, weibo_info.mid)) {
+	if (contains(block_contents.wb_block_mids_local_index, weibo_info.mid)) {
 		return true;
 	}
-	if (contains(block_content.wb_block_tbinfos_local_index, weibo_info.tbinfo)) {
+	if (contains(block_contents.wb_block_tbinfos_local_index, weibo_info.tbinfo)) {
 		return true;
 	}
-	if (contains(block_content.wb_block_person_ids_local_index, weibo_info.wb_person_id)) {
+	if (contains(block_contents.wb_block_person_ids_local_index, weibo_info.wb_person_id)) {
 		return true;
 	}
-	if (containsArr(weibo_info.keywordIndex, block_content.wb_key_words)) {
+	if (containsArr(weibo_info.wb_text, block_contents.keywordIndex)) {
 		return true;
 	}
 	return false;

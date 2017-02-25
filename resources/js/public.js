@@ -79,6 +79,13 @@ var storageIndexs = {
 	wb_block_person_ids_local_index: "wb_block_person_ids",
 }
 
+var storageIndexAndBlockContentIndexMap = {
+	keywordIndex: "keywordIndex",
+	wb_block_mids_local_index: "wb_block_mids_local_index",
+	wb_block_tbinfos_local_index: "wb_block_tbinfos_local_index",
+	wb_block_person_ids_local_index: "wb_block_person_ids_local_index"
+}
+
 var LocalStorageUtil = {
 
 	// 向local storage 添加一个要屏蔽的人
@@ -132,15 +139,12 @@ var LocalStorageUtil = {
 	},
 
 	getAll: function () {
-		browser.storage.local.get(["keyword16", "wb_block_person_ids"]).then(function (result) {
-			console.log(result);
-		}, handleError);
+		return browser.storage.local.get(["keyword16", "wb_block_person_ids"]);
 	},
 
 	store: function (k, v) {
 		var o = new Object();
 		o[k] = v;
-		console.log(o);
 		browser.storage.local.set(o);
 	}
 }
