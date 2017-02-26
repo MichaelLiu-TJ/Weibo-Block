@@ -90,56 +90,60 @@ var LocalStorageUtil = {
 
 	// 向local storage 添加一个要屏蔽的人
 	addBlockPersonId: function (_person_id) {
-		var storageIndex = storageIndexs.wb_block_person_ids_local_index;
-		browser.storage.local.get(storageIndex).then(function (result) {
-			if (result[storageIndex] == null) {
-				result[storageIndex] = new Object();
-			}
-			result[storageIndex][_person_id] = _person_id;
-			LocalStorageUtil.store(storageIndex, result[storageIndex]);
-		}, handleError);
+		LocalStorageUtil.setLocalStorage(storageIndexs.wb_block_person_ids_local_index, _person_id);
 	},
 	removePersonId: function (_person_id) {
-		var storageIndex = storageIndexs.wb_block_person_ids_local_index;
-		browser.storage.local.get(storageIndex).then(function (result) {
-			if (result[storageIndex]) {
-				delete result[storageIndex][_person_id];
-				LocalStorageUtil.store(storageIndex, result[storageIndex]);
-			}
-		}, handleError);
+		LocalStorageUtil.removeLocalStorage(storageIndexs.wb_block_person_ids_local_index, _person_id);
 	},
 
 	// 向local中添加一条要屏蔽的微博
-	addBlockWeibo: function (_tbinfo, _mid) {
-
+	addMid: function (_mid) {
+		LocalStorageUtil.setLocalStorage(storageIndexs.wb_block_mids_local_index, _mid);
 	},
-	removeBlockedWeibo: function (_tbinfo, _mid) {
+	removeMid: function (_mid) {
+		LocalStorageUtil.removeLocalStorage(storageIndexs.wb_block_mids_local_index, _mid);
+	},
 
+	addTbinfo: function (_tbinfo) {
+		LocalStorageUtil.setLocalStorage(storageIndexs.wb_block_tbinfos_local_index, _tbinfo);
+	},
+	removeTbinfo: function (_tbinfo) {
+		LocalStorageUtil.removeLocalStorage(storageIndexs.wb_block_tbinfos_local_index, _tbinfo);
 	},
 
 	// 向local中添加一个要屏蔽的关键词
 	addKeyword: function (_keyword) {
-		var storageIndex = storageIndexs.keywordIndex;
+		LocalStorageUtil.setLocalStorage(storageIndexs.keywordIndex, _keyword);
+	},
+	removeKeyword: function (_keyword) {
+		LocalStorageUtil.removeLocalStorage(storageIndexs.keywordIndex, _keyword);
+	},
+
+	setLocalStorage: function (storageIndex, content) {
 		browser.storage.local.get(storageIndex).then(function (result) {
 			if (result[storageIndex] == null) {
 				result[storageIndex] = new Object();
 			}
-			result[storageIndex][_keyword] = _keyword;
+			result[storageIndex][content] = content;
 			LocalStorageUtil.store(storageIndex, result[storageIndex]);
 		}, handleError);
 	},
-	removeKeyword: function (_keyword) {
-		var storageIndex = storageIndexs.keywordIndex;
+
+	removeLocalStorage: function (storageIndex, content) {
 		browser.storage.local.get(storageIndex).then(function (result) {
 			if (result[storageIndex]) {
-				delete result[storageIndex][_keyword];
+				delete result[storageIndex][content];
 				LocalStorageUtil.store(storageIndex, result[storageIndex]);
 			}
 		}, handleError);
 	},
 
 	getAll: function () {
-		return browser.storage.local.get(["keyword16", "wb_block_person_ids"]);
+		var keys = [];
+		for(var index in storageIndexs){
+			keys.push(storageIndexs[index]);
+		}
+		return browser.storage.local.get(keys);
 	},
 
 	store: function (k, v) {
