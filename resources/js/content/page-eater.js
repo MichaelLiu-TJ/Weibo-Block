@@ -28,6 +28,7 @@ browser.runtime.onMessage.addListener(eatPage);
 function rebuildBlockContentsAndExecuteBlock() {
 	var getting = LocalStorageUtil.getAll();
 	getting.then(function (result) {
+		console.log(result);
 		for (var index in storageIndexAndBlockContentIndexMap) {
 			var storageIndexStr = storageIndexs[index];//用于存储和获取local storage 的索引字符串
 			var temp_block_content = block_contents[storageIndexAndBlockContentIndexMap[index]];//内存中要屏蔽内容的分类数据数组
@@ -140,16 +141,16 @@ function extractWeiboCard(weiboCard) {
  */
 function needBlock(weibo_info) {
 	if (contains(block_contents.wb_block_mids_local_index, weibo_info.mid)) {
-		return true;
+		console.log("block by mid");return true;
 	}
 	if (contains(block_contents.wb_block_tbinfos_local_index, weibo_info.tbinfo)) {
-		return true;
+		console.log("block by tbinfo");return true;
 	}
 	if (contains(block_contents.wb_block_person_ids_local_index, weibo_info.wb_person_id)) {
-		return true;
+		console.log("block by person id");return true;
 	}
 	if (containsArr(weibo_info.wb_text, block_contents.keywordIndex)) {
-		return true;
+		console.log("block by keyword");return true;
 	}
 	return false;
 }
