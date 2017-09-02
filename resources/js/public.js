@@ -11,19 +11,19 @@ var WeiboInfo = function () {
 	this.nick_name;
 	this.wb_person_id;
 	this.wb_text;
-}
+};
 
 // 描述一个博主的信息
 var WeiboPerson = function () {
 	this.nick_name;
 	this.person_id;
 	this.avatar_src_url;
-}
+};
 
 function getQueryString(usercardStr, name) {
 	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
 	var r = usercardStr.match(reg);
-	if (r != null) return unescape(r[2]); return null;
+	if (r !== null) return unescape(r[2]); return null;
 }
 /**
  * 判断数组是否包含某元素
@@ -59,7 +59,7 @@ function handleError(error) {
 }
 
 function isNull(obj) {
-	return obj == null || obj == undefined ? true : false;
+	return obj === null || obj === undefined;
 }
 
 
@@ -77,14 +77,14 @@ var storageIndexs = {
 	wb_block_mids_local_index: "wb_block_mids",
 	wb_block_tbinfos_local_index: "wb_block_tbinfos",
 	wb_block_person_ids_local_index: "wb_block_person_ids",
-}
+};
 
 var storageIndexAndBlockContentIndexMap = {
 	keywordIndex: "keywordIndex",
 	wb_block_mids_local_index: "wb_block_mids_local_index",
 	wb_block_tbinfos_local_index: "wb_block_tbinfos_local_index",
 	wb_block_person_ids_local_index: "wb_block_person_ids_local_index"
-}
+};
 
 var LocalStorageUtil = {
 
@@ -121,8 +121,8 @@ var LocalStorageUtil = {
 
 	setLocalStorage: function (storageIndex, content) {
 		browser.storage.local.get(storageIndex).then(function (result) {
-			if (result[storageIndex] == null) {
-				result[storageIndex] = new Object();
+			if (result[storageIndex] === null) {
+				result[storageIndex] = {};
 			}
 			result[storageIndex][content] = content;
 			LocalStorageUtil.store(storageIndex, result[storageIndex]);
@@ -147,8 +147,8 @@ var LocalStorageUtil = {
 	},
 
 	store: function (k, v) {
-		var o = new Object();
+		var o = {};
 		o[k] = v;
 		browser.storage.local.set(o);
 	}
-}
+};

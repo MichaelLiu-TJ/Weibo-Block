@@ -8,7 +8,7 @@
 var hotWeiboPageUrl = "*://d.weibo.com/*";
 var zhihuPage = "*://*.zhihu.com/*";
 
-var ajaxURLs = new Object();
+var ajaxURLs = {};
 /**
  * 监听weibo的ajax发送
  */
@@ -19,8 +19,8 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 );
 
 function printAJAXRequest(requestDetails) {
-	if (requestDetails.type != null) {
-		if (requestDetails.type == "xmlhttprequest" || requestDetails.type == "sub_frame") {
+	if (requestDetails.type !== null) {
+		if (requestDetails.type === "xmlhttprequest" || requestDetails.type === "sub_frame") {
 			ajaxURLs[requestDetails.url] = "yes";
 		}
 	}
@@ -36,7 +36,7 @@ chrome.webRequest.onCompleted.addListener(
 );
 
 function removeBlockWeiboCard(requestDetails) {
-	if (ajaxURLs[requestDetails.url] == "yes") {
+	if (ajaxURLs[requestDetails.url] === "yes") {
 		// console.log(requestDetails.url+" "+ajaxURLs[requestDetails.url]);
 		// remove weibo card you don't want to see
 		blockWeiboCard();

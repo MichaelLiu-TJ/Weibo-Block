@@ -79,7 +79,7 @@ function handleMouseOver(event) {
 function handleMouseOut(event) {
 	if (this.contains(event.target)
 		&& !this.contains(event.relatedTarget)
-		&& event.relatedTarget != blockToolPopupDiv
+		&& event.relatedTarget !== blockToolPopupDiv
 		&& !blockToolPopupDiv.contains(event.relatedTarget)) {
 		blockToolPopupDiv.style.visibility = "hidden";
 		blockToolPopupDiv["weibo_info_current"] = null;
@@ -91,10 +91,10 @@ function handlePopUpClick(event) {
 	if (blockToolPopupDiv["weibo_info_current"] && blockToolPopupDiv["weiboCard"]) {
 		var weibo_info = blockToolPopupDiv["weibo_info_current"];
 		var block_selection_str = event.target.attributes['block_selection'].value;
-		if (block_selection_str == 'block_by_weibo_id') {
+		if (block_selection_str === 'block_by_weibo_id') {
 			LocalStorageUtil.addMid(weibo_info['mid']);
 			LocalStorageUtil.addTbinfo(weibo_info['tbinfo']);
-		} else if (block_selection_str == 'block_by_person_id') {
+		} else if (block_selection_str === 'block_by_person_id') {
 			var person_id = weibo_info['wb_person_id'];
 			LocalStorageUtil.addBlockPersonId(person_id);
 		}
